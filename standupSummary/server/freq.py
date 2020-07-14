@@ -8,8 +8,6 @@ from dotenv import load_dotenv
 
 # Set up paths
 script_dir = os.path.dirname(__file__)  # <-- absolute dir the script is in
-rel_path = "2091/data.txt"
-abs_file_path = os.path.join(script_dir, rel_path)
 
 # Get environment variables
 load_dotenv()
