@@ -1,5 +1,4 @@
 from flask import Flask, redirect, url_for
-from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy 
 from flask_dance.contrib.github import make_github_blueprint, github
 from flask_login import UserMixin, current_user, LoginManager, login_required, login_user, logout_user
@@ -15,7 +14,6 @@ github_blueprint = make_github_blueprint(client_id='c7291fcb9bf832c11e01', clien
 app.register_blueprint(github_blueprint, url_prefix='/login')
 
 db = SQLAlchemy(app)
-Migrate(app,db)
 login_manager = LoginManager(app)
 login_manager.init_app(app)
 

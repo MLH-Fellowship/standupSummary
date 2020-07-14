@@ -10,4 +10,4 @@ DEBUG = True
 
 
 # TODO IMPLEMENT DATABASE URL
-SQLALCHEMY_DATABASE_URI = 'sqlite:///basedir/login.db'
+SQLALCHEMY_DATABASE_URI = 'sqlite:///' + basedir + '/login.db'
