@@ -24,6 +24,24 @@ class OAuth(OAuthConsumerMixin, db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
     user = db.relationship(User)
 
+DATABASE = './login.db'
+
+def get_db():
+    db = getattr(g, '_database', None)
+    if db is None:
+        db = g._database = sqlite3.connect(DATABASE)
+    return db
+
+@app.teardown_appcontext
+def close_connection(exception):
+    db = getattr(g, '_database', None)
+    if db is not None:
+        db.close()
+
+# @app.route('/user/<username>')
+# def get_user():
+#     query = User.query.filter_by(username=username)
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -36,7 +54,7 @@ def github_login():
 
     account_info = github.get('/user')
     account_info_json = account_info.json()
-    return '<h1>Your Github name is {}'.format(account_info_json['login'])
+    return redirect('http://localhost:3000/preferences')
 
 github_blueprint.storage = SQLAlchemyStorage(OAuth, db.session, user=current_user, user_required=False) 
 @oauth_authorized.connect_via(github_blueprint)
