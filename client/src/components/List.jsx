@@ -19,7 +19,7 @@ const List = () => {
     
     const items = itemsList.map((item, i) => (
         <div key = {i} class="container">
-            <div class="level notification my-3 width-set">
+            <div class="level notification my-3 width-set hvr-grow">
                 <div class="mx-4">You referenced <strong>{item.word}</strong> {item.number} times.</div>
             </div>
         </div>
