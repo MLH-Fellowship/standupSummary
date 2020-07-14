@@ -7,10 +7,8 @@ from flask_dance.consumer import oauth_authorized
 from sqlalchemy.orm.exc import NoResultFound
 
 app = Flask(__name__)
-# app.config['SECRET_KEY'] = 'thisissupposedtobeasecret' # fix this
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/smoltamal/standupSummary/standupSummary/server/login.db' # fix this
 app.config.from_object('config')
-github_blueprint = make_github_blueprint(client_id='c7291fcb9bf832c11e01', client_secret='c9cfff4c1b2eb7224130432432e3f0f49450808c') # fix this
+github_blueprint = make_github_blueprint(client_id='c7291fcb9bf832c11e01', client_secret='c9cfff4c1b2eb7224130432432e3f0f49450808c') # fix this/set env var
 app.register_blueprint(github_blueprint, url_prefix='/login')
 
 db = SQLAlchemy(app)
