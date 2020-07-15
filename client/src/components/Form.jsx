@@ -19,7 +19,7 @@ const Form = () => {
 
     const [newWord, setNewWord] = useState('');
 
-    const [podName, setPodName] = useState('0.0.1');
+    const [podName, setPodName] = useState('pod-0-0-1');
 
     const numWordsReturned = [];
 

@@ -9,7 +9,7 @@ const LoginButton = () => {
     return (
         <div className="container has-text-centered" style={{marginTop: "3rem"}}>
             <button className="button is-large" aria-label="Github">
-                <a className="hvr-icon-bounce" href="/preferences" aria-label="Github">
+                <a className="hvr-icon-bounce" href="http://localhost:5000/login" aria-label="Github">
                     Login with Github &nbsp;
                     <FontAwesomeIcon icon={['fab', 'github']} className="hvr-icon" />
                 </a>

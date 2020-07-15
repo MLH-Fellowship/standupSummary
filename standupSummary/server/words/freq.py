@@ -14,7 +14,7 @@ load_dotenv()
 GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
 GITHUB_USERNAME = os.getenv('GITHUB_USERNAME')
 
-NUM_WORDS = 5 # TODO: change this based on user's input
+NUM_WORDS = 5
 
 # cache authentication method
 S = requests.Session()
@@ -24,7 +24,7 @@ GITHUB_USER_ID = int(os.getenv('GITHUB_USER_ID'))
 API_ROOT = "https://api.github.com"
 ORG_ROOT = API_ROOT + "/orgs/MLH-Fellowship"
 
-POD_NAME = "pod-0-2-1"  # TODO: change this
+POD_NAME = "pod-0-2-1"
 
 # Get list of stop words - this file is downloaded from nltk website
 STOP_WORDS_PATH = os.path.join(script_dir, 'english_stopwords.txt')
@@ -80,7 +80,7 @@ def process_user_comment(comment_body):
     return stripped_comment
 
 
-def get_word_frequency(user_id, pod_name):
+def get_word_frequency(user_id, pod_name, num):
     """
     Return a list of words and their frequencies
     >>> freq = get_word_frequency(34909206, "pod-0-1-2")
@@ -89,11 +89,9 @@ def get_word_frequency(user_id, pod_name):
     """
 
     if not check_pod_name(pod_name):
-        raise Exception(
-            "Pod name has to follow this format: 'pod-[0-9]-[0-9]-[0-9]")
+        return {"error": "Pod name has to follow this format: 'pod-[0-9]-[0-9]-[0-9]"}
     if not check_team_membership(GITHUB_USERNAME, pod_name):
-        raise Exception(
-            "You have to be a member of this pod/organization in order to see the comment frequency")
+        return {"error": "You have to be a member of this pod/organization in order to see the comment frequency"}
 
     comment_list = []
 
@@ -111,11 +109,11 @@ def get_word_frequency(user_id, pod_name):
             comment_list += processed_comment
 
     freq = Counter([word for word in comment_list
-                    if word not in STOP_WORDS]).most_common(NUM_WORDS)
+                    if word not in STOP_WORDS]).most_common(num)
     return freq
 
 
 if __name__ == "__main__":
-    freq = get_word_frequency(GITHUB_USER_ID, POD_NAME)
+    freq = get_word_frequency(GITHUB_USER_ID, POD_NAME, NUM_WORDS)
     print("Five common words by user {ID} in {pod_name}: \n".format(
         ID=GITHUB_USER_ID, pod_name=POD_NAME), freq)

@@ -4,14 +4,14 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fab } from '@fortawesome/free-brands-svg-icons';
-import { faCheckSquare, faSignOutAlt, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { faCheckSquare, faSignOutAlt, faSpinner, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 
 // Page Imports
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import Preferences from "./pages/Preferences";
 
-library.add(fab, faCheckSquare, faSignOutAlt, faSpinner);
+library.add(fab, faCheckSquare, faSignOutAlt, faSpinner, faExclamationTriangle);
 
 function App() {
   return (
