@@ -3,6 +3,8 @@ import React, { useState } from "react";
 
 import '../App.css';
 import 'react-bulma-components/dist/react-bulma-components.min.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 
 
 const Form = () => {
@@ -24,6 +26,10 @@ const Form = () => {
     for (let i = 1; i <= 50; i++) {
         numWordsReturned.push(i);
     }
+
+    const removeWordFromList = (word) => {
+        setWordsList(wordsList.filter(e => e !== word));
+    };
     
     const numberOptions = numWordsReturned.map((option, i) => (
         <option key={i} className="mx-6">{option}</option>
@@ -34,12 +40,10 @@ const Form = () => {
     ));
 
     const checkboxes = wordsList.map((word, i) => (
-        <p class="control">
-            <label class="checkbox px-5" style={{fontSize:"1.25rem"}}>
-            <input type="checkbox" key={i}/>
-                &nbsp; {word}
-            </label>
-        </p>
+        <div class="notification level width-set-small">
+            <span>{word} &nbsp;</span>
+            <FontAwesomeIcon icon={faTrashAlt} style={{cursor: 'pointer'}} onClick={() => {removeWordFromList(word)}} /> 
+        </div>
     ));
 
     const addWordToList = () => {

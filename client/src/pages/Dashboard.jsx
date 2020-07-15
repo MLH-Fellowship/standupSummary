@@ -1,5 +1,5 @@
 // Libraries
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 // Styles
 import '../App.css';
@@ -14,6 +14,26 @@ import Logout from '../components/Logout'
 import logo from "../assests/mlh-logo-color.png";
 
 const Dashboard = () => {
+  const [itemsList, setListData] = useState('');
+
+  let num = itemsList.length;
+
+  if(num===0) num='';
+
+  useEffect(() => {
+      fetch('/get_words').then(res => res.json())
+      .then(data => {
+        if(data.error) {
+          setListData(data);
+        } else {
+          setListData(data.words);
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+    }, []);
+
   return (
     <div>
       <nav class="level mx-4 my-4">
@@ -27,10 +47,10 @@ const Dashboard = () => {
       </nav>
       <section className="section">
         <div class = "level">
-        <Intro />
+          <Intro number={num} />
           <NewSelection />
         </div>
-        <List />
+          <List itemsList={itemsList} />
       </section>
     </div>
   );
