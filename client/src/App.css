@@ -35,6 +35,11 @@ html {
   color: #ffdc20;
 }
 
+.loading {
+  -webkit-animation: spinAround 700ms infinite linear;
+  animation: spinAround 700ms infinite linear;
+}
+
 @media only screen and (max-width: 768px) {
   .is-vertical-center {
     min-height: 750px;

@@ -19,12 +19,13 @@ const Form = () => {
 
     const [newWord, setNewWord] = useState('');
 
-    const [podName, setPodName] = useState('0.0.1');
+    const [podName, setPodName] = useState('pod-0-0-1');
 
     const numWordsReturned = [];
 
     const podNames = [
-        '0.0.1', '0.1.1', '0.2.1', '0.2.2', '0.3.1', '0.3.2', '0.4.1', '0.4.2', '0.5.1', '0.5.2', '0.6.3'
+        'pod-0-0-1', 'pod-0-1-1', 'pod-0-2-1', 'pod-0-2-2', 'pod-0-3-1', 'pod-0-3-2', 
+        'pod-0-4-1', 'pod-0-4-2', 'pod-0-5-1', 'pod-0-5-2', 'pod-0-6-3'
     ];
     
     for (let i = 1; i <= 50; i++) {

@@ -94,18 +94,23 @@ def add_summary():
 def get_words():
     summary = get_summary()
     # retrieve a user's number of words
-    num_words = summary['num_words']
+    num_words = int(summary['num_words'])
+    print('num', num_words)
     # retrieve a user's podname
     podname = summary['podname']
-    formatted_podname = podname.replace('.', '-')
-    formatted_podname = 'pod-' + formatted_podname
+    print('podname', podname)
+    # formatted_podname = podname.replace('.', '-')
+    # formatted_podname = 'pod-' + formatted_podname
     # retrieve a user's github id
-    num_words = summary['num_words']
     user = get_user()
     user_id = user['github_id']
+    print('userid', user_id)
     # execute frequency of words script
-    frequency = freq.get_word_frequency(user_id, formatted_podname)
-    return {"words": frequency, 'num_words': num_words}
+    result = freq.get_word_frequency(user_id, podname, num_words)
+    print('result', result)
+    if(type(result) is list):
+        return {"words": result}
+    return result
 
 @app.route('/logout')
 @login_required

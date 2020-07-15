@@ -13,11 +13,18 @@ script_dir = os.path.dirname(__file__)  # <-- absolute dir the script is in
 load_dotenv()
 GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
 GITHUB_USERNAME = os.getenv('GITHUB_USERNAME')
-GITHUB_USER_ID = int(os.getenv('GITHUB_USER_ID'))
+
+NUM_WORDS = 5
+
+# cache authentication method
+S = requests.Session()
+S.auth = (GITHUB_USERNAME, GITHUB_TOKEN)
+
+GITHUB_USER_ID = os.getenv('GITHUB_USER_ID')
 API_ROOT = "https://api.github.com"
 ORG_ROOT = API_ROOT + "/orgs/MLH-Fellowship"
 
-POD_NAME = "pod-0-5-2"  # TODO: change this
+POD_NAME = "pod-0-2-1"
 
 # Get list of stop words - this file is downloaded from nltk website
 STOP_WORDS_PATH = os.path.join(script_dir, 'english_stopwords.txt')
@@ -40,13 +47,12 @@ def check_pod_name(pod_name):
 
 def check_team_membership(username, pod_name):
     """
-    Given a username and a 
+    Given a username and a pod name, return if the user is in the pod.
     """
     url = ORG_ROOT + \
         "/teams/{pod_name}/memberships/{user}".format(
             user=username, pod_name=pod_name)
-    response = requests.get(url=url, auth=(
-        GITHUB_USERNAME, GITHUB_TOKEN)).json()
+    response = S.get(url=url).json()
     try:
         if response['state'] == 'active':
             return True
@@ -58,29 +64,23 @@ def check_team_membership(username, pod_name):
 def get_discussion_list_by_pod(pod_name):
     url = ORG_ROOT +\
         "/teams/{pod_name}/discussions".format(pod_name=pod_name)
-    response = requests.get(url, auth=(
-        GITHUB_USERNAME, GITHUB_TOKEN)).json()
+    response = S.get(url).json()
     return response
 
 
-def get_comment_by_user(user_id, pod_name, discussion):
-    url = ORG_ROOT +\
-        "/teams/{pod_name}/discussions/{discussion_number}/comments".format(
-            pod_name=pod_name, discussion_number=discussion['number'])
-    response = requests.get(url=url, auth=(
-        GITHUB_USERNAME, GITHUB_TOKEN)).json()
+def get_comment_by_user(user_id, pod_name, comments_url):
+    response = S.get(url=comments_url).json()
     return [comment for comment in response if comment['author']['id'] == user_id]
 
 
 def process_user_comment(comment_body):
-    stripped_comment = re.sub("\r\n", " ", comment_body)
-    stripped_comment = re.sub(r'[^a-z A-Z 0-9]+', '', stripped_comment)
-    stripped_comment = re.sub(' +', ' ', stripped_comment)
+    stripped_comment = re.sub(r'[\r\n +]', " ", comment_body)
+    stripped_comment = re.sub(r'[^a-z A-Z0-9]+', '', stripped_comment)
     stripped_comment = stripped_comment.lower()
     return stripped_comment
 
 
-def get_word_frequency(user_id, pod_name):
+def get_word_frequency(user_id, pod_name, num):
     """
     Return a list of words and their frequencies
     >>> freq = get_word_frequency(34909206, "pod-0-1-2")
@@ -89,28 +89,31 @@ def get_word_frequency(user_id, pod_name):
     """
 
     if not check_pod_name(pod_name):
-        raise Exception(
-            "Pod name has to follow this format: 'pod-[0-9]-[0-9]-[0-9]")
+        return {"error": "Pod name has to follow this format: 'pod-[0-9]-[0-9]-[0-9]"}
     if not check_team_membership(GITHUB_USERNAME, pod_name):
-        raise Exception(
-            "You have to be a member of this pod/organization in order to see the comment frequency")
+        return {"error": "You have to be a member of this pod/organization in order to see the comment frequency"}
 
     comment_list = []
 
-    for discussion in get_discussion_list_by_pod(pod_name):
+    discussions = get_discussion_list_by_pod(pod_name)
+    for discussion in discussions:
+        if discussion['comments_count'] == 0:
+            continue
         comment = get_comment_by_user(
-            user_id=GITHUB_USER_ID, pod_name=pod_name, discussion=discussion)
+            user_id=user_id,
+            pod_name=pod_name,
+            comments_url=discussion['comments_url'])
         if comment:
-            processed_comment = process_user_comment(comment[0]['body'])
-            comment_list.append(processed_comment)
+            processed_comment = process_user_comment(
+                comment[0]['body']).split()
+            comment_list += processed_comment
 
-    comment_list = ''.join(comment_list)
-    freq = Counter([word for word in comment_list.split()
-                    if word not in STOP_WORDS]).most_common()
+    freq = Counter([word for word in comment_list
+                    if word not in STOP_WORDS]).most_common(num)
     return freq
 
 
 if __name__ == "__main__":
-    freq = get_word_frequency(GITHUB_USER_ID, POD_NAME)
+    freq = get_word_frequency(GITHUB_USER_ID, POD_NAME, NUM_WORDS)
     print("Five common words by user {ID} in {pod_name}: \n".format(
-        ID=GITHUB_USER_ID, pod_name=POD_NAME), freq[:5])
+        ID=GITHUB_USER_ID, pod_name=POD_NAME), freq)

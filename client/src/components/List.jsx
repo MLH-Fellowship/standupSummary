@@ -1,39 +1,54 @@
 // Libraries
 import React, { useState, useEffect } from "react";
 import { CSSTransitionGroup } from 'react-transition-group';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSpinner, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 
 import '../App.css';
 import 'react-bulma-components/dist/react-bulma-components.min.css';
 
-
 const List = () => {
-    const [itemsList, setListData] = useState(
-        [
-            {word: 'Javascript', number: 92}, 
-            {word: 'API', number: 65}, 
-            {word: 'Pair-Programming', number: 46}, 
-            {word: 'Overcame', number: 34},
-            {word: 'Blocked', number: 20}
-        ]
-    );
-    const [numWords, setNumWords] = useState([]);
+    const [itemsList, setListData] = useState('');
 
     useEffect(() => {
-        fetch('/get_words').then(res => res.json()).then(data => {
-          setListData(data.words);
-          console.log(data.words);
-          setNumWords(data.num_words);
-          console.log(data.num_words)
+        fetch('/get_words').then(res => res.json())
+        .then(data => {
+          if(data.error) {
+            setListData(data);
+          } else {
+            setListData(data.words);
+          }
+        })
+        .catch(error => {
+          console.log(error);
         });
       }, []);
-    const maxWords = numWords[0];
-    const items = itemsList.slice(0, maxWords).map((item, i) => (
-        <div key = {i} class="container">
-            <div class="level notification my-3 width-set hvr-grow">
-                <div class="mx-4">You referenced <strong>{item[0]}</strong> {item[1]} times.</div>
-            </div>
+
+    let items;
+
+    if(itemsList.error) {
+      items = (
+        <div class="level notification is-warning my-3 width-set hvr-grow">
+                <div class="mx-4">Error: {itemsList.error}. Change your preferences.</div>
+                <FontAwesomeIcon icon={faExclamationTriangle} />
         </div>
-    ));
+    );
+    } else if(itemsList[0] !== undefined) {
+        items = itemsList.map((item, i) => (
+            <div key = {i} class="container">
+                <div class="level notification my-3 width-set hvr-grow">
+                    <div class="mx-4">You referenced <strong>{item[0]}</strong> {item[1]} times.</div>
+                </div>
+            </div>
+        ));
+    } else {
+        items = (
+            <div class="level notification my-3 width-set hvr-grow">
+                    <div class="mx-4">Fetching your results...</div>
+                    <FontAwesomeIcon icon={faSpinner} className="loading" />
+            </div>
+        );
+    }
 
     return (
         <div>
