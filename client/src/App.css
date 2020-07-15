@@ -11,6 +11,10 @@ html {
   width: 40rem;
 }
 
+.width-set-small {
+  width: 20rem;
+}
+
 .blue {
   background-color: #3173b7;
 }
