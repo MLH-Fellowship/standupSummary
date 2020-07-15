@@ -5,6 +5,7 @@ from flask_login import UserMixin, current_user, LoginManager, login_required, l
 from flask_dance.consumer.storage.sqla import OAuthConsumerMixin, SQLAlchemyStorage
 from flask_dance.consumer import oauth_authorized
 from sqlalchemy.orm.exc import NoResultFound
+# from freq import get_word_frequency
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -28,30 +29,10 @@ class OAuth(OAuthConsumerMixin, db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
     user = db.relationship(User)
 
-
-@app.route('/get_user')
-@login_required
-def get_user():
-    username = current_user.username
-    github_id = current_user.github_id
-    user = {'username': username, 'github_id ': github_id }
-    return user
-
-@app.route('/get_summary')
-# @login_required
-def get_summary():
-    podname = current_user.podname
-    num_words = current_user.num_words
-    excluded_words = current_user.excluded_words
-    summary = {'podname': podname, 'num_words': num_words, 'excluded_words': excluded_words}
-    print('summary', summary)
-    return summary
-
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-github_blueprint.storage = SQLAlchemyStorage(OAuth, db.session, user=current_user, user_required=False)
 @app.route('/login')
 def github_login():
     if not github.authorized:
@@ -82,14 +63,22 @@ def github_logged_in(blueprint, token):
         login_user(user)
     return redirect('http://localhost:3000/preferences')
 
-@app.route('/home')
+@app.route('/get_user')
 @login_required
-def home():
-    return '<h1>You are logged in as {}</h1>'.format(current_user.username)
+def get_user():
+    username = current_user.username
+    github_id = current_user.github_id
+    user = {'username': username, 'github_id': github_id }
+    return user
 
-@app.route('/')
-def index():
-    return 'Welcome Page!'
+@app.route('/get_summary')
+@login_required
+def get_summary():
+    podname = current_user.podname
+    num_words = current_user.num_words
+    excluded_words = current_user.excluded_words
+    summary = {'podname': podname, 'num_words': num_words, 'excluded_words': excluded_words}
+    return summary
 
 @app.route('/add_summary', methods=['POST'])
 @login_required
@@ -100,6 +89,17 @@ def add_summary():
     db.session.commit()
     return 'Done', 201
 
+
+# @app.route('/get_word_freq')
+# # @login_required
+# def get_word_freq():
+#     summary = get_summary()
+#     podname = summary['podname']
+#     num_words = summary['num_words']
+#     user = get_user()
+#     user_id = user['github_id']
+#     frequency = get_word_frequency(user_id, podname)
+#     return frequency[:num_words]
 
 @app.route('/logout')
 @login_required
