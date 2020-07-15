@@ -1,5 +1,5 @@
 from flask import Flask, redirect, url_for, request
-from flask_sqlalchemy import SQLAlchemy 
+from flask_sqlalchemy import SQLAlchemy
 from flask_dance.contrib.github import make_github_blueprint, github
 from flask_login import UserMixin, current_user, LoginManager, login_required, login_user, logout_user
 from flask_dance.consumer.storage.sqla import OAuthConsumerMixin, SQLAlchemyStorage
@@ -19,13 +19,10 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(250), unique=True)
     github_id = db.Column(db.Integer, unique=True)
-
-class Summary(UserMixin, db.Model):
-    user_id = db.Column(db.Integer, db.ForeignKey(User.id))
-    id = db.Column(db.Integer, primary_key=True)
     podname = db.Column(db.String(250))
     top_words = db.Column(db.String(250))
-    # excluded_words = db.Column(db.ARRAY(db.String()))
+    num_words = db.Column(db.String(250))
+    excluded_words = db.Column(db.String(500))
 
 class OAuth(OAuthConsumerMixin, db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
@@ -39,6 +36,16 @@ def get_user():
     github_id = current_user.github_id
     user = {'username': username, 'github_id ': github_id }
     return user
+
+@app.route('/get_summary')
+# @login_required
+def get_summary():
+    podname = current_user.podname
+    num_words = current_user.num_words
+    excluded_words = current_user.excluded_words
+    summary = {'podname': podname, 'num_words': num_words, 'excluded_words': excluded_words}
+    print('summary', summary)
+    return summary
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -88,12 +95,9 @@ def index():
 @login_required
 def add_summary():
     summary_data = request.get_json()
-
-    new_summary = Summary(podname=summary_data['podname'], top_words=summary_data['numWords'], excluded_words=summary_data['newWord'])
-
-    db.session.add(new_summary)
+    new_summary = dict(podname=summary_data['podname'], num_words=summary_data['numWords'], excluded_words=summary_data['newWord'])
+    User.query.filter_by(id=current_user.id).update(new_summary)
     db.session.commit()
-
     return 'Done', 201
 
 

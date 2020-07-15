@@ -55,7 +55,7 @@ const Form = () => {
 
     const submit = () => {
         
-        const summary = { podName, numWords, newWord };
+        const summary = { 'podname': podName, 'numWords': numWords, 'newWord': newWord };
         const response = fetch("/add_summary", {
             method: "POST",
             headers: {
@@ -111,9 +111,10 @@ const Form = () => {
                 </div>
             </div>
             <p class="control">
-                <a class="button is-primary" onClick={submit}>
+            <button class="button is-primary" onClick={submit}>Submit</button>
+                {/* <a class="button is-primary" onClick={}>
                     Submit
-                </a>
+                </a> */}
             </p>
         </div>
     );
