@@ -9,27 +9,23 @@ from dotenv import load_dotenv
 # Set up paths
 script_dir = os.path.dirname(__file__)  # <-- absolute dir the script is in
 
+# Get list of stop words - this file is downloaded from nltk website
+STOP_WORDS_PATH = os.path.join(script_dir, 'english_stopwords.txt') 
+
 # Get environment variables
 load_dotenv()
-GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
-GITHUB_USERNAME = os.getenv('GITHUB_USERNAME')
-
-NUM_WORDS = 5
+GITHUB_TOKEN = os.getenv('GITHUB_TOKEN') # here 
 
 # cache authentication method
 S = requests.Session()
-S.auth = (GITHUB_USERNAME, GITHUB_TOKEN)
 
-GITHUB_USER_ID = os.getenv('GITHUB_USER_ID')
 API_ROOT = "https://api.github.com"
 ORG_ROOT = API_ROOT + "/orgs/MLH-Fellowship"
 
-POD_NAME = "pod-0-2-1"
-
-# Get list of stop words - this file is downloaded from nltk website
-STOP_WORDS_PATH = os.path.join(script_dir, 'english_stopwords.txt')
-
-
+def set_cache(user_name):
+    # cache authentication method
+    S.auth = (user_name, GITHUB_TOKEN) 
+    return S
 
 def check_pod_name(pod_name):
     """
@@ -86,7 +82,8 @@ def get_word_frequency(user_name, user_id, pod_name, num, excluded_words):
     >>> freq[:5]
     [('work', 6), ('code', 6), ('keras', 5), ('scikitlearn', 5), ('prs', 5)]
     """
-
+    
+    set_cache(user_name) 
     STOP_WORDS = set(line.strip() for line in open(STOP_WORDS_PATH)) | set(
     ["today", "blockers", "yesterday", "shoutouts"]) | set(excluded_words)
 
@@ -113,9 +110,3 @@ def get_word_frequency(user_name, user_id, pod_name, num, excluded_words):
     freq = Counter([word for word in comment_list
                     if word not in STOP_WORDS]).most_common(num)
     return freq
-
-
-if __name__ == "__main__":
-    freq = get_word_frequency(GITHUB_USER_ID, POD_NAME, NUM_WORDS)
-    print("Five common words by user {ID} in {pod_name}: \n".format(
-        ID=GITHUB_USER_ID, pod_name=POD_NAME), freq)
