@@ -5,9 +5,7 @@ from flask_login import UserMixin, current_user, LoginManager, login_required, l
 from flask_dance.consumer.storage.sqla import OAuthConsumerMixin, SQLAlchemyStorage
 from flask_dance.consumer import oauth_authorized
 from sqlalchemy.orm.exc import NoResultFound
-# from freq import get_word_frequency
-
-from words import freq
+# from words import freq
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -103,13 +101,15 @@ def add_summary():
 #     frequency = get_word_frequency(user_id, podname)
 #     return frequency[:num_words]
 
+# @app.route('/getWords')
+# def get_words():
+#     result = freq.get_word_frequency(16248113, "pod-0-2-1")
+#     return {"words": result}
+
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('/'))
 
-@app.route('/getWords')
-def get_words():
-    result = freq.get_word_frequency(16248113, "pod-0-2-1")
-    return {"words": result}
+
