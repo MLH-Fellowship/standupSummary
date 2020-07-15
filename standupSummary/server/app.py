@@ -6,6 +6,8 @@ from flask_dance.consumer.storage.sqla import OAuthConsumerMixin, SQLAlchemyStor
 from flask_dance.consumer import oauth_authorized
 from sqlalchemy.orm.exc import NoResultFound
 
+from words import freq
+
 app = Flask(__name__)
 app.config.from_object('config')
 github_blueprint = make_github_blueprint(client_id='c7291fcb9bf832c11e01', client_secret='c9cfff4c1b2eb7224130432432e3f0f49450808c') # fix this/set env var
@@ -15,81 +17,83 @@ db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.init_app(app)
 
-class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(250), unique=True)
-    github_id = db.Column(db.Integer, unique=True)
+# class User(UserMixin, db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     username = db.Column(db.String(250), unique=True)
+#     github_id = db.Column(db.Integer, unique=True)
 
-class OAuth(OAuthConsumerMixin, db.Model):
-    user_id = db.Column(db.Integer, db.ForeignKey(User.id))
-    user = db.relationship(User)
+# class OAuth(OAuthConsumerMixin, db.Model):
+#     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
+#     user = db.relationship(User)
 
-DATABASE = './login.db'
+# DATABASE = './login.db'
 
-def get_db():
-    db = getattr(g, '_database', None)
-    if db is None:
-        db = g._database = sqlite3.connect(DATABASE)
-    return db
+# def get_db():
+#     db = getattr(g, '_database', None)
+#     if db is None:
+#         db = g._database = sqlite3.connect(DATABASE)
+#     return db
 
-@app.teardown_appcontext
-def close_connection(exception):
-    db = getattr(g, '_database', None)
-    if db is not None:
-        db.close()
+# @app.teardown_appcontext
+# def close_connection(exception):
+#     db = getattr(g, '_database', None)
+#     if db is not None:
+#         db.close()
 
-# @app.route('/user/<username>')
-# def get_user():
-#     query = User.query.filter_by(username=username)
+# @login_manager.user_loader
+# def load_user(user_id):
+#     return User.query.get(int(user_id))
 
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
+# github_blueprint.storage = SQLAlchemyStorage(OAuth, db.session, user=current_user, user_required=False)
+# @app.route('/login')
+# def github_login():
+#     if not github.authorized:
+#         return redirect(url_for('github.login'))
 
-github_blueprint.storage = SQLAlchemyStorage(OAuth, db.session, user=current_user, user_required=False)
-@app.route('/login')
-def github_login():
-    if not github.authorized:
-        return redirect(url_for('github.login'))
+#     account_info = github.get('/user')
+#     account_info_json = account_info.json()
+#     return account_info_json #redirect('http://localhost:3000/preferences')
 
-    account_info = github.get('/user')
-    account_info_json = account_info.json()
-    return redirect('http://localhost:3000/preferences')
+# github_blueprint.storage = SQLAlchemyStorage(OAuth, db.session, user=current_user, user_required=False) 
+# @oauth_authorized.connect_via(github_blueprint)
+# def github_logged_in(blueprint, token):
+#     account_info = blueprint.session.get('/user')
 
-github_blueprint.storage = SQLAlchemyStorage(OAuth, db.session, user=current_user, user_required=False) 
-@oauth_authorized.connect_via(github_blueprint)
-def github_logged_in(blueprint, token):
-    account_info = blueprint.session.get('/user')
+#     if account_info.ok:
+#         print('in ok')
+#         account_info_json = account_info.json()
+#         username = account_info_json['login']
+#         github_id = account_info_json['id']
+#         query = User.query.filter_by(username=username)
 
-    if account_info.ok:
-        print('in ok')
-        account_info_json = account_info.json()
-        username = account_info_json['login']
-        github_id = account_info_json['id']
-        query = User.query.filter_by(username=username)
+#         try:
+#             print('try')
+#             user = query.one()
+#         except NoResultFound:
+#             print('exc')
+#             user = User(username=username, github_id=github_id)
+#             db.session.add(user)
+#             db.session.commit()
 
-        try:
-            print('try')
-            user = query.one()
-        except NoResultFound:
-            print('exc')
-            user = User(username=username, github_id=github_id)
-            db.session.add(user)
-            db.session.commit()
+#         login_user(user)
 
-        login_user(user)
+# @app.route('/')
+# @login_required
+# def dashboard():
+#     return '<h1>You are logged in as {}</h1>'.format(current_user.username)
 
-@app.route('/')
-@login_required
-def dashboard():
-    return '<h1>You are logged in as {}</h1>'.format(current_user.username)
+# @app.route('/home')
+# def index():
+#     return 'Home'
 
-@app.route('/home')
-def index():
-    return 'Home'
+# @app.route('/logout')
+# @login_required
+# def logout():
+#     logout_user()
+#     return redirect(url_for('/home'))
 
-@app.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('/home'))
+
+@app.route('/getWords')
+def get_words():
+    result = freq.get_word_frequency(16248113, "pod-0-2-1")
+    return {"words": result}
