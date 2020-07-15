@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for
+from flask import Flask, redirect, url_for, request
 from flask_sqlalchemy import SQLAlchemy 
 from flask_dance.contrib.github import make_github_blueprint, github
 from flask_login import UserMixin, current_user, LoginManager, login_required, login_user, logout_user
@@ -19,6 +19,13 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(250), unique=True)
     github_id = db.Column(db.Integer, unique=True)
+
+class Summary(UserMixin, db.Model):
+    user_id = db.Column(db.Integer, db.ForeignKey(User.id))
+    id = db.Column(db.Integer, primary_key=True)
+    podname = db.Column(db.String(250))
+    top_words = db.Column(db.String(250))
+    # excluded_words = db.Column(db.ARRAY(db.String()))
 
 class OAuth(OAuthConsumerMixin, db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
@@ -76,6 +83,19 @@ def home():
 @app.route('/')
 def index():
     return 'Welcome Page!'
+
+@app.route('/add_summary', methods=['POST'])
+@login_required
+def add_summary():
+    summary_data = request.get_json()
+
+    new_summary = Summary(podname=summary_data['podname'], top_words=summary_data['numWords'], excluded_words=summary_data['newWord'])
+
+    db.session.add(new_summary)
+    db.session.commit()
+
+    return 'Done', 201
+
 
 @app.route('/logout')
 @login_required

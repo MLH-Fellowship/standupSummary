@@ -54,6 +54,18 @@ const Form = () => {
     };
 
     const submit = () => {
+        
+        const summary = { podName, numWords, newWord };
+        const response = fetch("/add_summary", {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json"
+            },
+            body: JSON.stringify(summary)
+        });
+        if (response.ok) {
+            console.log("response worked!");
+        }   
         window.location.replace("http://localhost:3000/dashboard");
     };
 
