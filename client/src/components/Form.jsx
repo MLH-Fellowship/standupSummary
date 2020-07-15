@@ -6,14 +6,7 @@ import 'react-bulma-components/dist/react-bulma-components.min.css';
 
 
 const Form = () => {
-    const [wordsList, setWordsList] = useState(
-        [
-            {word: 'the', selected: true}, 
-            {word: 'a', selected: true}, 
-            {word: 'an', selected: false}, 
-            {word: 'did', selected: false}
-        ]
-    );
+    const [wordsList, setWordsList] = useState([]);
 
     const [numWords, setNumWords] = useState(50);
 
@@ -43,20 +36,20 @@ const Form = () => {
     const checkboxes = wordsList.map((word, i) => (
         <p class="control">
             <label class="checkbox px-5" style={{fontSize:"1.25rem"}}>
-            <input type="checkbox" key={i} checked={word.selected} />
-                &nbsp; {word.word}
+            <input type="checkbox" key={i}/>
+                &nbsp; {word}
             </label>
         </p>
     ));
 
     const addWordToList = () => {
-        setWordsList(wordsList.concat([{word: newWord, selected: true}]));
+        setWordsList(wordsList.concat([newWord]));
         setNewWord('');
     };
 
     const submit = () => {
         
-        const summary = { 'podname': podName, 'numWords': numWords, 'newWord': newWord };
+        const summary = { 'podname': podName, 'numWords': numWords, 'excludedWords': wordsList };
         const response = fetch("/add_summary", {
             method: "POST",
             headers: {

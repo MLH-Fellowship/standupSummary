@@ -21,7 +21,7 @@ const Dashboard = () => {
   if(num===0) num='';
 
   useEffect(() => {
-      fetch('/get_word_freq').then(res => res.json())
+      fetch('/get_words').then(res => res.json())
       .then(data => {
         if(data.error) {
           setListData(data);
