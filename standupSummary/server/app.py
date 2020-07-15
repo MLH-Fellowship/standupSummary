@@ -5,7 +5,7 @@ from flask_login import UserMixin, current_user, LoginManager, login_required, l
 from flask_dance.consumer.storage.sqla import OAuthConsumerMixin, SQLAlchemyStorage
 from flask_dance.consumer import oauth_authorized
 from sqlalchemy.orm.exc import NoResultFound
-# from words import freq
+from words import freq
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -89,22 +89,23 @@ def add_summary():
     db.session.commit()
     return 'Done', 201
 
-
-# @app.route('/get_word_freq')
-# # @login_required
-# def get_word_freq():
-#     summary = get_summary()
-#     podname = summary['podname']
-#     num_words = summary['num_words']
-#     user = get_user()
-#     user_id = user['github_id']
-#     frequency = get_word_frequency(user_id, podname)
-#     return frequency[:num_words]
-
-# @app.route('/getWords')
-# def get_words():
-#     result = freq.get_word_frequency(16248113, "pod-0-2-1")
-#     return {"words": result}
+@app.route('/get_words')
+# @login_required
+def get_words():
+    summary = get_summary()
+    # retrieve a user's number of words
+    num_words = summary['num_words']
+    # retrieve a user's podname
+    podname = summary['podname']
+    formatted_podname = podname.replace('.', '-')
+    formatted_podname = 'pod-' + formatted_podname
+    # retrieve a user's github id
+    num_words = summary['num_words']
+    user = get_user()
+    user_id = user['github_id']
+    # execute frequency of words script
+    frequency = freq.get_word_frequency(user_id, formatted_podname)
+    return {"words": frequency, 'num_words': num_words}
 
 @app.route('/logout')
 @login_required

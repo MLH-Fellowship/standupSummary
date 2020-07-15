@@ -17,7 +17,7 @@ GITHUB_USER_ID = int(os.getenv('GITHUB_USER_ID'))
 API_ROOT = "https://api.github.com"
 ORG_ROOT = API_ROOT + "/orgs/MLH-Fellowship"
 
-POD_NAME = "pod-0-2-1"  # TODO: change this
+POD_NAME = "pod-0-5-2"  # TODO: change this
 
 # Get list of stop words - this file is downloaded from nltk website
 STOP_WORDS_PATH = os.path.join(script_dir, 'english_stopwords.txt')

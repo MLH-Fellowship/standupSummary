@@ -16,15 +16,18 @@ const List = () => {
             {word: 'Blocked', number: 20}
         ]
     );
+    const [numWords, setNumWords] = useState([]);
 
     useEffect(() => {
-        fetch('/getWords').then(res => res.json()).then(data => {
+        fetch('/get_words').then(res => res.json()).then(data => {
           setListData(data.words);
           console.log(data.words);
+          setNumWords(data.num_words);
+          console.log(data.num_words)
         });
       }, []);
-    
-    const items = itemsList.map((item, i) => (
+    const maxWords = numWords[0];
+    const items = itemsList.slice(0, maxWords).map((item, i) => (
         <div key = {i} class="container">
             <div class="level notification my-3 width-set hvr-grow">
                 <div class="mx-4">You referenced <strong>{item[0]}</strong> {item[1]} times.</div>
