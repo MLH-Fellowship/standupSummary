@@ -24,23 +24,14 @@ class OAuth(OAuthConsumerMixin, db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
     user = db.relationship(User)
 
-DATABASE = './login.db'
 
-def get_db():
-    db = getattr(g, '_database', None)
-    if db is None:
-        db = g._database = sqlite3.connect(DATABASE)
-    return db
-
-@app.teardown_appcontext
-def close_connection(exception):
-    db = getattr(g, '_database', None)
-    if db is not None:
-        db.close()
-
-# @app.route('/user/<username>')
-# def get_user():
-#     query = User.query.filter_by(username=username)
+@app.route('/get_user')
+@login_required
+def get_user():
+    username = current_user.username
+    github_id = current_user.github_id
+    user = {'username': username, 'github_id ': github_id }
+    return user
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -62,34 +53,32 @@ def github_logged_in(blueprint, token):
     account_info = blueprint.session.get('/user')
 
     if account_info.ok:
-        print('in ok')
         account_info_json = account_info.json()
         username = account_info_json['login']
         github_id = account_info_json['id']
         query = User.query.filter_by(username=username)
 
         try:
-            print('try')
             user = query.one()
         except NoResultFound:
-            print('exc')
             user = User(username=username, github_id=github_id)
             db.session.add(user)
             db.session.commit()
 
         login_user(user)
-
-@app.route('/')
-@login_required
-def dashboard():
-    return '<h1>You are logged in as {}</h1>'.format(current_user.username)
+    return redirect('http://localhost:3000/preferences')
 
 @app.route('/home')
+@login_required
+def home():
+    return '<h1>You are logged in as {}</h1>'.format(current_user.username)
+
+@app.route('/')
 def index():
-    return 'Home'
+    return 'Welcome Page!'
 
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('/home'))
+    return redirect(url_for('/'))
