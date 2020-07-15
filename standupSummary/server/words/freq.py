@@ -28,8 +28,7 @@ POD_NAME = "pod-0-2-1"
 
 # Get list of stop words - this file is downloaded from nltk website
 STOP_WORDS_PATH = os.path.join(script_dir, 'english_stopwords.txt')
-STOP_WORDS = set(line.strip() for line in open(STOP_WORDS_PATH)) | set(
-    ["today", "blockers", "yesterday", "shoutouts"])
+
 
 
 def check_pod_name(pod_name):
@@ -80,7 +79,7 @@ def process_user_comment(comment_body):
     return stripped_comment
 
 
-def get_word_frequency(user_id, pod_name, num):
+def get_word_frequency(user_name, user_id, pod_name, num, excluded_words):
     """
     Return a list of words and their frequencies
     >>> freq = get_word_frequency(34909206, "pod-0-1-2")
@@ -88,9 +87,12 @@ def get_word_frequency(user_id, pod_name, num):
     [('work', 6), ('code', 6), ('keras', 5), ('scikitlearn', 5), ('prs', 5)]
     """
 
+    STOP_WORDS = set(line.strip() for line in open(STOP_WORDS_PATH)) | set(
+    ["today", "blockers", "yesterday", "shoutouts"]) | set(excluded_words)
+
     if not check_pod_name(pod_name):
         return {"error": "Pod name has to follow this format: 'pod-[0-9]-[0-9]-[0-9]"}
-    if not check_team_membership(GITHUB_USERNAME, pod_name):
+    if not check_team_membership(user_name, pod_name):
         return {"error": "You have to be a member of this pod/organization in order to see the comment frequency"}
 
     comment_list = []

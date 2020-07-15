@@ -84,7 +84,8 @@ def get_summary():
 @login_required
 def add_summary():
     summary_data = request.get_json()
-    new_summary = dict(podname=summary_data['podname'], num_words=summary_data['numWords'], excluded_words=summary_data['newWord'])
+    excluded_words = str(summary_data['excludedWords']).strip('[]').replace(',', '').replace('\'', '')
+    new_summary = dict(podname=summary_data['podname'], num_words=summary_data['numWords'], excluded_words=excluded_words)
     User.query.filter_by(id=current_user.id).update(new_summary)
     db.session.commit()
     return 'Done', 201
@@ -92,22 +93,28 @@ def add_summary():
 @app.route('/get_words')
 # @login_required
 def get_words():
-    summary = get_summary()
+    
     # retrieve a user's number of words
+    summary = get_summary()
     num_words = int(summary['num_words'])
-    print('num', num_words)
+
     # retrieve a user's podname
     podname = summary['podname']
-    print('podname', podname)
-    # formatted_podname = podname.replace('.', '-')
-    # formatted_podname = 'pod-' + formatted_podname
-    # retrieve a user's github id
+
+    # retrieve user's github id
     user = get_user()
     user_id = user['github_id']
-    print('userid', user_id)
+
+    # retrieve user's username
+    username = user['username']
+
+    # retrieve user's excluded words
+    excluded_words = summary['excluded_words']
+    excluded_words = excluded_words.split(' ')
+
     # execute frequency of words script
-    result = freq.get_word_frequency(user_id, podname, num_words)
-    print('result', result)
+    result = freq.get_word_frequency(username, user_id, podname, num_words, excluded_words)
+ 
     if(type(result) is list):
         return {"words": result}
     return result
