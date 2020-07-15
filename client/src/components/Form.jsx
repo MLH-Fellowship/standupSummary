@@ -54,6 +54,18 @@ const Form = () => {
     };
 
     const submit = () => {
+        
+        const summary = { 'podname': podName, 'numWords': numWords, 'newWord': newWord };
+        const response = fetch("/add_summary", {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json"
+            },
+            body: JSON.stringify(summary)
+        });
+        if (response.ok) {
+            console.log("response worked!");
+        }   
         window.location.replace("http://localhost:3000/dashboard");
     };
 
@@ -99,9 +111,10 @@ const Form = () => {
                 </div>
             </div>
             <p class="control">
-                <a class="button is-primary" onClick={submit}>
+            <button class="button is-primary" onClick={submit}>Submit</button>
+                {/* <a class="button is-primary" onClick={}>
                     Submit
-                </a>
+                </a> */}
             </p>
         </div>
     );
