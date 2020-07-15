@@ -8,23 +8,7 @@ import '../App.css';
 import 'react-bulma-components/dist/react-bulma-components.min.css';
 
 
-const List = () => {
-    const [itemsList, setListData] = useState('');
-
-    useEffect(() => {
-        fetch('/get_word_freq').then(res => res.json())
-        .then(data => {
-          if(data.error) {
-            setListData(data);
-          } else {
-            setListData(data.words);
-          }
-        })
-        .catch(error => {
-          console.log(error);
-        });
-      }, []);
-
+const List = ({ itemsList }) => {
     let items;
 
     if(itemsList.error) {
