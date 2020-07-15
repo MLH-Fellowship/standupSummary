@@ -7,6 +7,8 @@ from flask_dance.consumer import oauth_authorized
 from sqlalchemy.orm.exc import NoResultFound
 # from freq import get_word_frequency
 
+from words import freq
+
 app = Flask(__name__)
 app.config.from_object('config')
 github_blueprint = make_github_blueprint(client_id='c7291fcb9bf832c11e01', client_secret='c9cfff4c1b2eb7224130432432e3f0f49450808c') # fix this/set env var
@@ -106,3 +108,8 @@ def add_summary():
 def logout():
     logout_user()
     return redirect(url_for('/'))
+
+@app.route('/getWords')
+def get_words():
+    result = freq.get_word_frequency(16248113, "pod-0-2-1")
+    return {"words": result}

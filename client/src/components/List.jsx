@@ -1,5 +1,5 @@
 // Libraries
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CSSTransitionGroup } from 'react-transition-group';
 
 import '../App.css';
@@ -16,11 +16,18 @@ const List = () => {
             {word: 'Blocked', number: 20}
         ]
     );
+
+    useEffect(() => {
+        fetch('/getWords').then(res => res.json()).then(data => {
+          setListData(data.words);
+          console.log(data.words);
+        });
+      }, []);
     
     const items = itemsList.map((item, i) => (
         <div key = {i} class="container">
             <div class="level notification my-3 width-set hvr-grow">
-                <div class="mx-4">You referenced <strong>{item.word}</strong> {item.number} times.</div>
+                <div class="mx-4">You referenced <strong>{item[0]}</strong> {item[1]} times.</div>
             </div>
         </div>
     ));
