@@ -68,7 +68,6 @@ def github_logged_in(blueprint, token):
             db.session.commit()
 
         login_user(user)
-    # return redirect('http://localhost:3000/preferences')
 
 @app.route('/get_user')
 @login_required
@@ -120,9 +119,11 @@ def get_words():
     excluded_words = excluded_words.split(' ')
 
     # execute frequency of words script
-    result = freq.get_word_frequency(username, user_id, podname, num_words, excluded_words, access_token)
-    if(type(result) is list):
-        return {"words": result}
+    freq, corpus = freq.get_word_frequency(username, user_id, podname, num_words, excluded_words, access_token)
+    sentences = 'sentences '# here run the sentence builder script with corpus
+    if(type(freq) is list):
+        result = {"words": freq, "sentences": sentences}
+
     return result
 
 @app.route('/logout')

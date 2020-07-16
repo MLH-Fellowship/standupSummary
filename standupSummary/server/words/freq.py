@@ -63,13 +63,15 @@ def get_comment_by_user(user_id, pod_name, comments_url):
 
 
 def process_user_comment(comment_body):
-    stripped_comment = re.sub(r'[\r\n +]', " ", comment_body)
-    stripped_comment = re.sub(r'[^a-z A-Z0-9]+', '', stripped_comment)
-    stripped_comment = stripped_comment.lower()
+    stripped_comment = comment_body.splitlines()
+    stripped_comment = [re.sub(r'[^a-z A-Z0-9]+', '', line.lower())
+                        for line in stripped_comment]
+    stripped_comment = [re.sub(' +', ' ', line.lstrip())
+                        for line in stripped_comment if line]
     return stripped_comment
 
 
-def get_word_frequency(user_name, user_id, pod_name, num, excluded_words, access_token):
+def get_word_frequency(user_name, user_id, pod_name, num, excluded_words, access_token, return_corpus=False):
     """
     Return a list of words and their frequencies
     >>> freq = get_word_frequency(34909206, "pod-0-1-2")
@@ -87,6 +89,7 @@ def get_word_frequency(user_name, user_id, pod_name, num, excluded_words, access
         return {"error": "You have to be a member of this pod/organization in order to see the comment frequency"}
 
     comment_list = []
+    corpus = []
 
     discussions = get_discussion_list_by_pod(pod_name)
     
@@ -99,9 +102,14 @@ def get_word_frequency(user_name, user_id, pod_name, num, excluded_words, access
             comments_url=discussion['comments_url'])
         if comment:
             processed_comment = process_user_comment(
-                comment[0]['body']).split()
-            comment_list += processed_comment
+                comment[0]['body'])
+            corpus += processed_comment
+            for line in processed_comment:
+                comment_list += line.split()
 
     freq = Counter([word for word in comment_list
                     if word not in STOP_WORDS]).most_common(num)
-    return freq
+    if return_corpus:
+        return freq, corpus
+    else:
+        return freq
