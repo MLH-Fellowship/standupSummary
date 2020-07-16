@@ -23,6 +23,7 @@ class User(UserMixin, db.Model):
     podname = db.Column(db.String(250))
     num_words = db.Column(db.String(250))
     excluded_words = db.Column(db.String(500))
+    # corpus = db.Column(db.String(250))
 
 class OAuth(OAuthConsumerMixin, db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
@@ -120,13 +121,26 @@ def get_words():
 
     # execute frequency of words script
     frequency, corpus = freq.get_word_frequency(username, user_id, podname, num_words, excluded_words, access_token, True)
-    sentences = sentence_gen.sentence_gen(corpus)
 
-    print(sentences)
+    # add corpus database
+    corpus = str(corpus).strip('[]').replace(',', '').replace('\'', '')
+    User.query.filter_by(id=current_user.id).update(corpus)
+    db.session.commit()
+   
   
     if(type(frequency) is list):
-        result = {"words": frequency, "sentences": sentences}
+        result = {"words": frequency}
 
+    return result
+
+@app.route('/get_sentence')
+@login_required
+def get_sentence():
+    user_corpus = User.query.filter_by(id=current_user.id).corpus
+    corpus = user_corpus.split(' ')
+    sentence = sentence_gen.sentence_gen(corpus)
+    print('sentence:', sentence)
+    result = {'sentence': sentence}
     return result
 
 @app.route('/logout')
