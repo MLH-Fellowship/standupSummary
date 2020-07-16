@@ -5,7 +5,7 @@ from flask_login import UserMixin, current_user, LoginManager, login_required, l
 from flask_dance.consumer.storage.sqla import OAuthConsumerMixin, SQLAlchemyStorage
 from flask_dance.consumer import oauth_authorized
 from sqlalchemy.orm.exc import NoResultFound
-from words import freq
+from words import freq, sentence_gen
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -120,7 +120,10 @@ def get_words():
 
     # execute frequency of words script
     frequency, corpus = freq.get_word_frequency(username, user_id, podname, num_words, excluded_words, access_token, True)
-    sentences = 'sentences '# here run the sentence builder script with corpus
+    sentences = sentence_gen.sentence_gen(corpus)
+
+    print(sentences)
+  
     if(type(frequency) is list):
         result = {"words": frequency, "sentences": sentences}
 
