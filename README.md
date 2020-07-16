@@ -27,5 +27,5 @@ Navigate into `/client` folder. Run `npm install && npm start`
       -  `export OAUTHLIB_INSECURE_TRANSPORT=1`
       - `export OAUTHLIB_RELAX_TOKEN_SCOPE=1`
       - this allows us to utilize GitHub Oauth without an https request
-6. to run the app (within `server/`): `FLASK_APP=app.py python3 -m flask run`
+6. to run the app (within `server/`): `flask run`
  
