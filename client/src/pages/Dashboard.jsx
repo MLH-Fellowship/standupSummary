@@ -1,5 +1,5 @@
 // Libraries
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 // Styles
 import '../App.css';
@@ -12,8 +12,46 @@ import NewSelection from '../components/NewSelection';
 import Logout from '../components/Logout'
 
 import logo from "../assests/mlh-logo-color.png";
+import Sentences from "../components/Sentences";
 
 const Dashboard = () => {
+  const [wordsList, setWordsData] = useState('');
+  const [sentencesList, setSentencesData] = useState('');
+
+  let num = wordsList.length;
+
+  if(num===0) num='';
+
+  // useEffect(() => {
+  //     fetch('/get_words').then(res => res.json())
+  //     .then(data => {
+  //       console.log(data);
+  //       if(data.words.error) {
+  //         setWordsData(data.words);
+  //       } else {
+  //         setWordsData(data.words.words);
+  //       }
+  //       setSentencesData(data.sentences);
+  //     })
+  //     .catch(error => {
+  //       console.log(error);
+  //     });
+  //   }, []);
+
+  useEffect(() => {
+    fetch('/get_words').then(res => res.json())
+    .then(data => {
+      if(data.error) {
+        setWordsData(data);
+      } else {
+        setWordsData(data.words);
+      }
+    })
+    .catch(error => {
+      console.log(error);
+    });
+  }, []);
+
   return (
     <div>
       <nav class="level mx-4 my-4">
@@ -22,15 +60,18 @@ const Dashboard = () => {
                 <h2 class = "title is-2 mx-4">Standup Summary</h2>
             </div>
             <div class="level-right">
-             <Logout />
+              <NewSelection />
+              <Logout />
             </div>
       </nav>
       <section className="section">
         <div class = "level">
-        <Intro />
-          <NewSelection />
+          <Intro number={num} />
         </div>
-        <List />
+        <div class="level align-top">
+          <List itemsList={wordsList} />
+          <Sentences sentences={sentencesList} />
+        </div>
       </section>
     </div>
   );

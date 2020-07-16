@@ -4,33 +4,22 @@ import json
 import re
 from collections import Counter
 
-from dotenv import load_dotenv
-
 # Set up paths
 script_dir = os.path.dirname(__file__)  # <-- absolute dir the script is in
 
-# Get environment variables
-load_dotenv()
-GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
-GITHUB_USERNAME = os.getenv('GITHUB_USERNAME')
-
-NUM_WORDS = 5 # TODO: change this based on user's input
+# Get list of stop words - this file is downloaded from nltk website
+STOP_WORDS_PATH = os.path.join(script_dir, 'english_stopwords.txt') 
 
 # cache authentication method
 S = requests.Session()
-S.auth = (GITHUB_USERNAME, GITHUB_TOKEN)
 
-GITHUB_USER_ID = int(os.getenv('GITHUB_USER_ID'))
 API_ROOT = "https://api.github.com"
 ORG_ROOT = API_ROOT + "/orgs/MLH-Fellowship"
 
-POD_NAME = "pod-0-1-2"  # TODO: change this
-
-# Get list of stop words - this file is downloaded from nltk website
-STOP_WORDS_PATH = os.path.join(script_dir, 'english_stopwords.txt')
-STOP_WORDS = set(line.strip() for line in open(STOP_WORDS_PATH)) | set(
-    ["today", "blockers", "yesterday", "shoutouts"])
-
+def set_cache(user_name, access_token):
+    # cache authentication method
+    S.auth = (user_name, access_token) 
+    return S
 
 def check_pod_name(pod_name):
     """
@@ -74,48 +63,53 @@ def get_comment_by_user(user_id, pod_name, comments_url):
 
 
 def process_user_comment(comment_body):
-    stripped_comment = re.sub(r'[\r\n +]', " ", comment_body)
-    stripped_comment = re.sub(r'[^a-z A-Z0-9]+', '', stripped_comment)
-    stripped_comment = stripped_comment.lower()
+    stripped_comment = comment_body.splitlines()
+    stripped_comment = [re.sub(r'[^a-z A-Z0-9]+', '', line.lower())
+                        for line in stripped_comment]
+    stripped_comment = [re.sub(' +', ' ', line.lstrip())
+                        for line in stripped_comment if line]
     return stripped_comment
 
 
-def get_word_frequency(user_id, pod_name):
+def get_word_frequency(user_name, user_id, pod_name, num, excluded_words, access_token, return_corpus=False):
     """
     Return a list of words and their frequencies
     >>> freq = get_word_frequency(34909206, "pod-0-1-2")
     >>> freq[:5]
     [('work', 6), ('code', 6), ('keras', 5), ('scikitlearn', 5), ('prs', 5)]
     """
+    
+    set_cache(user_name, access_token) 
+    STOP_WORDS = set(line.strip() for line in open(STOP_WORDS_PATH)) | set(
+    ["today", "blockers", "yesterday", "shoutouts"]) | set(excluded_words)
 
     if not check_pod_name(pod_name):
-        raise Exception(
-            "Pod name has to follow this format: 'pod-[0-9]-[0-9]-[0-9]")
-    if not check_team_membership(GITHUB_USERNAME, pod_name):
-        raise Exception(
-            "You have to be a member of this pod/organization in order to see the comment frequency")
+        return {"error": "Pod name has to follow this format: 'pod-[0-9]-[0-9]-[0-9]"}
+    if not check_team_membership(user_name, pod_name):
+        return {"error": "You have to be a member of this pod/organization in order to see the comment frequency"}
 
     comment_list = []
+    corpus = []
 
     discussions = get_discussion_list_by_pod(pod_name)
+    
     for discussion in discussions:
         if discussion['comments_count'] == 0:
             continue
         comment = get_comment_by_user(
-            user_id=GITHUB_USER_ID,
+            user_id=user_id,
             pod_name=pod_name,
             comments_url=discussion['comments_url'])
         if comment:
             processed_comment = process_user_comment(
-                comment[0]['body']).split()
-            comment_list += processed_comment
+                comment[0]['body'])
+            corpus += processed_comment
+            for line in processed_comment:
+                comment_list += line.split()
 
     freq = Counter([word for word in comment_list
-                    if word not in STOP_WORDS]).most_common(NUM_WORDS)
-    return freq
-
-
-if __name__ == "__main__":
-    freq = get_word_frequency(GITHUB_USER_ID, POD_NAME)
-    print("Five common words by user {ID} in {pod_name}: \n".format(
-        ID=GITHUB_USER_ID, pod_name=POD_NAME), freq)
+                    if word not in STOP_WORDS]).most_common(num)
+    if return_corpus:
+        return freq, corpus
+    else:
+        return freq

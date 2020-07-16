@@ -6,4 +6,5 @@ __pycache__
 server/login.db
 .vscode/
 .env
-
+nameOfEnvironment/
+standupSummary/server/__pycache__

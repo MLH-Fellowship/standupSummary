@@ -115,6 +115,7 @@ other
 some
 such
 no
+na
 nor
 not
 only

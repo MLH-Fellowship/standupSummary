@@ -3,35 +3,50 @@ import React, { useState } from "react";
 
 import '../App.css';
 import 'react-bulma-components/dist/react-bulma-components.min.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 
 
 const Form = () => {
-    const [wordsList, setWordsList] = useState(
-        [
-            {word: 'the', selected: true}, 
-            {word: 'a', selected: true}, 
-            {word: 'an', selected: false}, 
-            {word: 'did', selected: false}
-        ]
-    );
+    const [wordsList, setWordsList] = useState([]);
 
     const [numWords, setNumWords] = useState(50);
 
     const [newWord, setNewWord] = useState('');
 
-    const [podName, setPodName] = useState('0.0.1');
+    const [podName, setPodName] = useState('pod-0-0-1');
 
-    const numWordsReturned = [];
+    let numWordsReturned = [];
 
     const podNames = [
-        '0.0.1', '0.1.1', '0.2.1', '0.2.2', '0.3.1', '0.3.2', '0.4.1', '0.4.2', '0.5.1', '0.5.2', '0.6.3'
+        'pod-0-0-1', 'pod-0-1-1', 'pod-0-1-2', 'pod-0-2-1', 'pod-0-2-2', 'pod-0-3-1', 'pod-0-3-2', 
+        'pod-0-4-1', 'pod-0-4-2', 'pod-0-5-1', 'pod-0-5-2', 'pod-0-6-3'
     ];
     
     for (let i = 1; i <= 50; i++) {
         numWordsReturned.push(i);
     }
-    
-    const numberOptions = numWordsReturned.map((option, i) => (
+
+    const removeWordFromList = (word) => {
+        setWordsList(wordsList.filter(e => e !== word));
+    };
+
+    const addWordToList = () => {
+        setWordsList(wordsList.concat([newWord]));
+        setNewWord('');
+    };
+
+    const numberWordsOptions = numWordsReturned.map((option, i) => (
+        <option key={i} className="mx-6">{option}</option>
+    ));
+
+    numWordsReturned = [];
+
+    for (let i = 1; i <= 15; i++) {
+        numWordsReturned.push(i);
+    }
+
+    const numberWordsInSentenceOptions = numWordsReturned.map((option, i) => (
         <option key={i} className="mx-6">{option}</option>
     ));
 
@@ -40,20 +55,25 @@ const Form = () => {
     ));
 
     const checkboxes = wordsList.map((word, i) => (
-        <p class="control">
-            <label class="checkbox px-5" style={{fontSize:"1.25rem"}}>
-            <input type="checkbox" key={i} checked={word.selected} />
-                &nbsp; {word.word}
-            </label>
-        </p>
+        <div class="notification level width-set-small">
+            <span>{word} &nbsp;</span>
+            <FontAwesomeIcon icon={faTrashAlt} style={{cursor: 'pointer'}} onClick={() => {removeWordFromList(word)}} /> 
+        </div>
     ));
 
-    const addWordToList = () => {
-        setWordsList(wordsList.concat([{word: newWord, selected: true}]));
-        setNewWord('');
-    };
-
     const submit = () => {
+        
+        const summary = { 'podname': podName, 'numWords': numWords, 'excludedWords': wordsList };
+        const response = fetch("/add_summary", {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json"
+            },
+            body: JSON.stringify(summary)
+        });
+        if (response.ok) {
+            console.log("response worked!");
+        }   
         window.location.replace("http://localhost:3000/dashboard");
     };
 
@@ -72,7 +92,7 @@ const Form = () => {
                     <label class="label">How many top words do you want?</label>
                     <span class="select">
                         <select value={numWords} onChange={e => setNumWords(e.currentTarget.value)}>
-                            {numberOptions}
+                            {numberWordsOptions}
                         </select>
                     </span>
                 </div>
@@ -99,9 +119,10 @@ const Form = () => {
                 </div>
             </div>
             <p class="control">
-                <a class="button is-primary" onClick={submit}>
+            <button class="button is-primary" onClick={submit}>Submit</button>
+                {/* <a class="button is-primary" onClick={}>
                     Submit
-                </a>
+                </a> */}
             </p>
         </div>
     );

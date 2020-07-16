@@ -12,7 +12,7 @@ import Logout from '../components/Logout';
 
 import logo from "../assests/mlh-logo-color.png";
 
-const Home = () => {
+const Preferences = () => {
   return (
       <div>
         <nav class="level mx-4 my-4">
@@ -32,4 +32,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Preferences;

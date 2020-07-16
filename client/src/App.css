@@ -7,32 +7,21 @@ html {
   width: 100%;
 }
 
+.align-top {
+  align-items: flex-start !important;
+}
+
 .width-set {
   width: 40rem;
 }
 
-.blue {
-  background-color: #3173b7;
+.width-set-small {
+  width: 20rem;
 }
 
-.red {
-  background-color: #f74b03;
-}
-
-.yellow {
-  background-color: #ffdc20;
-}
-
-.blue-text {
-  color: #3173b7;
-}
-
-.red-text {
-  color: #f74b03;
-}
-
-.yellow-text {
-  color: #ffdc20;
+.loading {
+  -webkit-animation: spinAround 700ms infinite linear;
+  animation: spinAround 700ms infinite linear;
 }
 
 @media only screen and (max-width: 768px) {
