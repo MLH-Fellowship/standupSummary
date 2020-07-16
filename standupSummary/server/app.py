@@ -9,7 +9,7 @@ from words import freq
 
 app = Flask(__name__)
 app.config.from_object('config')
-github_blueprint = make_github_blueprint(client_id='c7291fcb9bf832c11e01', client_secret='c9cfff4c1b2eb7224130432432e3f0f49450808c', scope=["read:org"]) # fix this/set env var
+github_blueprint = make_github_blueprint(client_id='c7291fcb9bf832c11e01', client_secret='c9cfff4c1b2eb7224130432432e3f0f49450808c', scope=["read:org", "read:discussion", "repo"]) # fix this/set env var, 
 app.register_blueprint(github_blueprint, url_prefix='/login')
 
 db = SQLAlchemy(app)

@@ -89,6 +89,7 @@ def get_word_frequency(user_name, user_id, pod_name, num, excluded_words, access
     comment_list = []
 
     discussions = get_discussion_list_by_pod(pod_name)
+    
     for discussion in discussions:
         if discussion['comments_count'] == 0:
             continue
