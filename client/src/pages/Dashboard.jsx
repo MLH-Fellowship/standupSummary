@@ -12,6 +12,7 @@ import NewSelection from '../components/NewSelection';
 import Logout from '../components/Logout'
 
 import logo from "../assests/mlh-logo-color.png";
+import Sentences from "../components/Sentences";
 
 const Dashboard = () => {
   const [itemsList, setListData] = useState('');
@@ -42,15 +43,18 @@ const Dashboard = () => {
                 <h2 class = "title is-2 mx-4">Standup Summary</h2>
             </div>
             <div class="level-right">
-             <Logout />
+              <NewSelection />
+              <Logout />
             </div>
       </nav>
       <section className="section">
         <div class = "level">
           <Intro number={num} />
-          <NewSelection />
         </div>
+        <div class="level align-top">
           <List itemsList={itemsList} />
+          <Sentences />
+        </div>
       </section>
     </div>
   );

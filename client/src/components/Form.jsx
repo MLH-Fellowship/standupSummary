@@ -16,10 +16,12 @@ const Form = () => {
 
     const [podName, setPodName] = useState('pod-0-0-1');
 
-    const numWordsReturned = [];
+    const [numWordsInSentence, setNumWordsInSentence] = useState(5);
+
+    let numWordsReturned = [];
 
     const podNames = [
-        'pod-0-0-1', 'pod-0-1-1', 'pod-0-2-1', 'pod-0-2-2', 'pod-0-3-1', 'pod-0-3-2', 
+        'pod-0-0-1', 'pod-0-0-2', 'pod-0-1-1', 'pod-0-2-1', 'pod-0-2-2', 'pod-0-3-1', 'pod-0-3-2', 
         'pod-0-4-1', 'pod-0-4-2', 'pod-0-5-1', 'pod-0-5-2', 'pod-0-6-3'
     ];
     
@@ -30,8 +32,23 @@ const Form = () => {
     const removeWordFromList = (word) => {
         setWordsList(wordsList.filter(e => e !== word));
     };
-    
-    const numberOptions = numWordsReturned.map((option, i) => (
+
+    const addWordToList = () => {
+        setWordsList(wordsList.concat([newWord]));
+        setNewWord('');
+    };
+
+    const numberWordsOptions = numWordsReturned.map((option, i) => (
+        <option key={i} className="mx-6">{option}</option>
+    ));
+
+    numWordsReturned = [];
+
+    for (let i = 1; i <= 15; i++) {
+        numWordsReturned.push(i);
+    }
+
+    const numberWordsInSentenceOptions = numWordsReturned.map((option, i) => (
         <option key={i} className="mx-6">{option}</option>
     ));
 
@@ -45,11 +62,6 @@ const Form = () => {
             <FontAwesomeIcon icon={faTrashAlt} style={{cursor: 'pointer'}} onClick={() => {removeWordFromList(word)}} /> 
         </div>
     ));
-
-    const addWordToList = () => {
-        setWordsList(wordsList.concat([newWord]));
-        setNewWord('');
-    };
 
     const submit = () => {
         
@@ -82,11 +94,18 @@ const Form = () => {
                     <label class="label">How many top words do you want?</label>
                     <span class="select">
                         <select value={numWords} onChange={e => setNumWords(e.currentTarget.value)}>
-                            {numberOptions}
+                            {numberWordsOptions}
                         </select>
                     </span>
                 </div>
-                <div></div>
+                <div class="field my-4">
+                    <label class="label">How many words do you want in your resume sentences?</label>
+                    <span class="select">
+                        <select value={numWordsInSentence} onChange={e => setNumWordsInSentence(e.currentTarget.value)}>
+                            {numberWordsInSentenceOptions}
+                        </select>
+                    </span>
+                </div>
                 <div></div>
                 <div></div>
             </div>

@@ -7,6 +7,10 @@ html {
   width: 100%;
 }
 
+.align-top {
+  align-items: flex-start !important;
+}
+
 .width-set {
   width: 40rem;
 }

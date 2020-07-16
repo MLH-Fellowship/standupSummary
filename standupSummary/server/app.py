@@ -106,7 +106,10 @@ def get_words():
     podname = summary['podname']
 
     # retrieve user's token 
+    print(current_user.id)
+    # print(OAuth.query.filter_by(id=current_user.id))
     user_token = OAuth.query.filter_by(id=current_user.id).first().token
+    print("user: ", user_token)
     access_token = user_token['access_token']
     
     # retrieve user's github id, username, excluded words
