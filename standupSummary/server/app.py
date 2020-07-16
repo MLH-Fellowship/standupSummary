@@ -118,7 +118,7 @@ def get_words():
     # execute frequency of words script
     freq, corpus = freq.get_word_frequency(username, user_id, podname, num_words, excluded_words, access_token, True)
     sentences = sentence_gen.sentence(corpus)
-    # here run the sentence builder script with corpus
+  
     if(type(freq) is list):
         result = {"words": freq, "sentences": sentences}
 
