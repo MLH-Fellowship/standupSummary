@@ -108,7 +108,11 @@ def get_word_frequency(user_name, user_id, pod_name, num, excluded_words, access
                 comment_list += line.split()
 
     freq = Counter([word for word in comment_list
-                    if word not in STOP_WORDS]).most_common(num)
+                    if word not in STOP_WORDS])
+    if num > len(freq):
+        freq = freq.most_common()
+    else:
+        freq = freq.most_common(num)
     if return_corpus:
         return freq, corpus
     else:
