@@ -15,25 +15,42 @@ import logo from "../assests/mlh-logo-color.png";
 import Sentences from "../components/Sentences";
 
 const Dashboard = () => {
-  const [itemsList, setListData] = useState('');
+  const [wordsList, setWordsData] = useState('');
+  const [sentencesList, setSentencesData] = useState('');
 
-  let num = itemsList.length;
+  let num = wordsList.length;
 
   if(num===0) num='';
 
+  // useEffect(() => {
+  //     fetch('/get_words').then(res => res.json())
+  //     .then(data => {
+  //       console.log(data);
+  //       if(data.words.error) {
+  //         setWordsData(data.words);
+  //       } else {
+  //         setWordsData(data.words.words);
+  //       }
+  //       setSentencesData(data.sentences);
+  //     })
+  //     .catch(error => {
+  //       console.log(error);
+  //     });
+  //   }, []);
+
   useEffect(() => {
-      fetch('/get_words').then(res => res.json())
-      .then(data => {
-        if(data.error) {
-          setListData(data);
-        } else {
-          setListData(data.words);
-        }
-      })
-      .catch(error => {
-        console.log(error);
-      });
-    }, []);
+    fetch('/get_words').then(res => res.json())
+    .then(data => {
+      if(data.error) {
+        setWordsData(data);
+      } else {
+        setWordsData(data.words);
+      }
+    })
+    .catch(error => {
+      console.log(error);
+    });
+  }, []);
 
   return (
     <div>
@@ -52,8 +69,8 @@ const Dashboard = () => {
           <Intro number={num} />
         </div>
         <div class="level align-top">
-          <List itemsList={itemsList} />
-          <Sentences />
+          <List itemsList={wordsList} />
+          <Sentences sentences={sentencesList} />
         </div>
       </section>
     </div>

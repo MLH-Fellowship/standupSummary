@@ -119,10 +119,10 @@ def get_words():
     excluded_words = excluded_words.split(' ')
 
     # execute frequency of words script
-    freq, corpus = freq.get_word_frequency(username, user_id, podname, num_words, excluded_words, access_token)
+    frequency, corpus = freq.get_word_frequency(username, user_id, podname, num_words, excluded_words, access_token, True)
     sentences = 'sentences '# here run the sentence builder script with corpus
-    if(type(freq) is list):
-        result = {"words": freq, "sentences": sentences}
+    if(type(frequency) is list):
+        result = {"words": frequency, "sentences": sentences}
 
     return result
 

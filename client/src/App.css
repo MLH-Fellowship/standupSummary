@@ -19,30 +19,6 @@ html {
   width: 20rem;
 }
 
-.blue {
-  background-color: #3173b7;
-}
-
-.red {
-  background-color: #f74b03;
-}
-
-.yellow {
-  background-color: #ffdc20;
-}
-
-.blue-text {
-  color: #3173b7;
-}
-
-.red-text {
-  color: #f74b03;
-}
-
-.yellow-text {
-  color: #ffdc20;
-}
-
 .loading {
   -webkit-animation: spinAround 700ms infinite linear;
   animation: spinAround 700ms infinite linear;

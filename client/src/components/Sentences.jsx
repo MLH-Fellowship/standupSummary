@@ -2,32 +2,18 @@
 import React, { useState, useEffect } from "react";
 import { CSSTransitionGroup } from 'react-transition-group';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSpinner, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
+import { faSpinner, faExclamationTriangle, faPlus } from "@fortawesome/free-solid-svg-icons";
 
 import '../App.css';
 import 'react-bulma-components/dist/react-bulma-components.min.css';
 
 
-const Sentences = () => {
-    const [sentences, setSentences] = useState([
-        'Erin is really cool.',
-        'Jason is also cool.',
-        'Diana is also cool.',
-    ]);
-
-    const getSentence = () => {
-        fetch('/get_words').then(res => res.json())
-        .then(data => {
-            if(data.error) {
-            setSentences(data);
-            } else {
-            setSentences(data.words);
-            }
-        })
-        .catch(error => {
-            console.log(error);
-        });
-    };
+const Sentences = ({sentences}) => {
+    // const [sentences, setSentences] = useState([
+    //     'Erin is really cool.',
+    //     'Jason is also cool.',
+    //     'Diana is also cool.',
+    // ]);
 
     let sentencesDiv;
 
@@ -66,8 +52,9 @@ const Sentences = () => {
                 {sentencesDiv}
             </CSSTransitionGroup>
             <button className="button is-medium">
-                <a className="hvr-icon-forward">
-                    Generate a new sentence
+                <a>
+                    Generate a new sentence &nbsp;
+                    <FontAwesomeIcon icon={faPlus} />
                 </a>
             </button>
         </div>
