@@ -4,17 +4,11 @@ import json
 import re
 from collections import Counter
 
-from dotenv import load_dotenv
-
 # Set up paths
 script_dir = os.path.dirname(__file__)  # <-- absolute dir the script is in
 
 # Get list of stop words - this file is downloaded from nltk website
 STOP_WORDS_PATH = os.path.join(script_dir, 'english_stopwords.txt') 
-
-# Get environment variables
-load_dotenv()
-GITHUB_TOKEN = os.getenv('GITHUB_TOKEN') # here 
 
 # cache authentication method
 S = requests.Session()
@@ -22,9 +16,9 @@ S = requests.Session()
 API_ROOT = "https://api.github.com"
 ORG_ROOT = API_ROOT + "/orgs/MLH-Fellowship"
 
-def set_cache(user_name):
+def set_cache(user_name, access_token):
     # cache authentication method
-    S.auth = (user_name, GITHUB_TOKEN) 
+    S.auth = (user_name, access_token) 
     return S
 
 def check_pod_name(pod_name):
@@ -75,7 +69,7 @@ def process_user_comment(comment_body):
     return stripped_comment
 
 
-def get_word_frequency(user_name, user_id, pod_name, num, excluded_words):
+def get_word_frequency(user_name, user_id, pod_name, num, excluded_words, access_token):
     """
     Return a list of words and their frequencies
     >>> freq = get_word_frequency(34909206, "pod-0-1-2")
@@ -83,7 +77,7 @@ def get_word_frequency(user_name, user_id, pod_name, num, excluded_words):
     [('work', 6), ('code', 6), ('keras', 5), ('scikitlearn', 5), ('prs', 5)]
     """
     
-    set_cache(user_name) 
+    set_cache(user_name, access_token) 
     STOP_WORDS = set(line.strip() for line in open(STOP_WORDS_PATH)) | set(
     ["today", "blockers", "yesterday", "shoutouts"]) | set(excluded_words)
 

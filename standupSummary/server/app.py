@@ -9,7 +9,7 @@ from words import freq
 
 app = Flask(__name__)
 app.config.from_object('config')
-github_blueprint = make_github_blueprint(client_id='c7291fcb9bf832c11e01', client_secret='c9cfff4c1b2eb7224130432432e3f0f49450808c') # fix this/set env var
+github_blueprint = make_github_blueprint(client_id='c7291fcb9bf832c11e01', client_secret='c9cfff4c1b2eb7224130432432e3f0f49450808c', scope=["read:org"]) # fix this/set env var
 app.register_blueprint(github_blueprint, url_prefix='/login')
 
 db = SQLAlchemy(app)
@@ -21,7 +21,6 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(250), unique=True)
     github_id = db.Column(db.Integer, unique=True)
     podname = db.Column(db.String(250))
-    top_words = db.Column(db.String(250))
     num_words = db.Column(db.String(250))
     excluded_words = db.Column(db.String(500))
 
@@ -32,6 +31,11 @@ class OAuth(OAuthConsumerMixin, db.Model):
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+@app.route('/')
+@login_required
+def index():
+    return redirect('http://localhost:3000/preferences')
 
 @app.route('/login')
 def github_login():
@@ -46,22 +50,25 @@ github_blueprint.storage = SQLAlchemyStorage(OAuth, db.session, user=current_use
 @oauth_authorized.connect_via(github_blueprint)
 def github_logged_in(blueprint, token):
     account_info = blueprint.session.get('/user')
+    # github_token = Oauth(token=token)
 
     if account_info.ok:
+        # user model
         account_info_json = account_info.json()
         username = account_info_json['login']
-        github_id = account_info_json['id']
+        github_id = account_info_json['id']     
         query = User.query.filter_by(username=username)
 
         try:
             user = query.one()
         except NoResultFound:
             user = User(username=username, github_id=github_id)
+            # oauth
             db.session.add(user)
             db.session.commit()
 
         login_user(user)
-    return redirect('http://localhost:3000/preferences')
+    # return redirect('http://localhost:3000/preferences')
 
 @app.route('/get_user')
 @login_required
@@ -92,29 +99,25 @@ def add_summary():
 
 @app.route('/get_words')
 # @login_required
-def get_words():
-    
-    # retrieve a user's number of words
+def get_words():  
+    # retrieve a user's number of words and podname
     summary = get_summary()
     num_words = int(summary['num_words'])
-
-    # retrieve a user's podname
     podname = summary['podname']
 
-    # retrieve user's github id
+    # retrieve user's token 
+    user_token = OAuth.query.filter_by(id=current_user.id).first().token
+    access_token = user_token['access_token']
+    
+    # retrieve user's github id, username, excluded words
     user = get_user()
     user_id = user['github_id']
-
-    # retrieve user's username
     username = user['username']
-
-    # retrieve user's excluded words
     excluded_words = summary['excluded_words']
     excluded_words = excluded_words.split(' ')
 
     # execute frequency of words script
-    result = freq.get_word_frequency(username, user_id, podname, num_words, excluded_words)
- 
+    result = freq.get_word_frequency(username, user_id, podname, num_words, excluded_words, access_token)
     if(type(result) is list):
         return {"words": result}
     return result
@@ -124,5 +127,3 @@ def get_words():
 def logout():
     logout_user()
     return redirect(url_for('/'))
-
-
