@@ -16,8 +16,6 @@ const Form = () => {
 
     const [podName, setPodName] = useState('pod-0-0-1');
 
-    const [numWordsInSentence, setNumWordsInSentence] = useState(5);
-
     let numWordsReturned = [];
 
     const podNames = [
@@ -98,14 +96,7 @@ const Form = () => {
                         </select>
                     </span>
                 </div>
-                <div class="field my-4">
-                    <label class="label">How many words do you want in your resume sentences?</label>
-                    <span class="select">
-                        <select value={numWordsInSentence} onChange={e => setNumWordsInSentence(e.currentTarget.value)}>
-                            {numberWordsInSentenceOptions}
-                        </select>
-                    </span>
-                </div>
+                <div></div>
                 <div></div>
                 <div></div>
             </div>

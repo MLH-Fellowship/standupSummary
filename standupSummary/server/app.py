@@ -23,7 +23,7 @@ class User(UserMixin, db.Model):
     podname = db.Column(db.String(250))
     num_words = db.Column(db.String(250))
     excluded_words = db.Column(db.String(500))
-    # corpus = db.Column(db.String(250))
+    corpus = db.Column(db.String(250))
 
 class OAuth(OAuthConsumerMixin, db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
@@ -124,10 +124,14 @@ def get_words():
 
     # add corpus database
     corpus = str(corpus).strip('[]').replace(',', '').replace('\'', '')
-    User.query.filter_by(id=current_user.id).update(corpus)
+    the_user = User.query.filter_by(id=current_user.id)
+
+    dicti = dict(corpus=corpus)
+
+    the_user.update(dicti)
+
     db.session.commit()
    
-  
     if(type(frequency) is list):
         result = {"words": frequency}
 
@@ -136,7 +140,7 @@ def get_words():
 @app.route('/get_sentence')
 @login_required
 def get_sentence():
-    user_corpus = User.query.filter_by(id=current_user.id).corpus
+    user_corpus = User.query.filter_by(id=current_user.id).first().corpus
     corpus = user_corpus.split(' ')
     sentence = sentence_gen.sentence_gen(corpus)
     print('sentence:', sentence)

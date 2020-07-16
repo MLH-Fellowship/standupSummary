@@ -8,38 +8,26 @@ import '../App.css';
 import 'react-bulma-components/dist/react-bulma-components.min.css';
 
 
-const Sentences = ({sentences}) => {
-    // const [sentences, setSentences] = useState([
-    //     'Erin is really cool.',
-    //     'Jason is also cool.',
-    //     'Diana is also cool.',
-    // ]);
+const Sentences = () => {
+    const [sentences, setSentences] = useState([]);
 
-    let sentencesDiv;
+    const getSentence = () => {
+        fetch('/get_sentence').then(res => res.json())
+        .then(data => {
+            setSentences(sentences.concat([data.sentence]));
+        })
+        .catch(error => {
+          console.log(error);
+        });
+      };
 
-    if(sentences.error) {
-      sentencesDiv = (
-        <div class="level notification is-warning my-3 width-set hvr-grow">
-                <div class="mx-4">Error: {sentences.error}. Change your preferences.</div>
-                <FontAwesomeIcon icon={faExclamationTriangle} />
-        </div>
-    );
-    } else if(sentences[0] !== undefined) {
-        sentencesDiv = sentences.map((item, i) => (
-            <div key = {i} class="container">
-                <div class="level notification my-3 width-set hvr-grow">
-                    <div class="mx-4">{item}</div>
-                </div>
-            </div>
-        ));
-    } else {
-        sentencesDiv = (
+    let sentencesDiv = sentences.map((item, i) => (
+        <div key = {i} class="container">
             <div class="level notification my-3 width-set hvr-grow">
-                    <div class="mx-4">Fetching your results...</div>
-                    <FontAwesomeIcon icon={faSpinner} className="loading" />
+                <div class="mx-4">{item}</div>
             </div>
-        );
-    }
+        </div>
+    ));
 
     return (
         <div class="continer has-text-centered">
@@ -51,7 +39,7 @@ const Sentences = ({sentences}) => {
                 transitionLeaveTimeout={300}>
                 {sentencesDiv}
             </CSSTransitionGroup>
-            <button className="button is-medium">
+            <button className="button is-medium" onClick = {getSentence}>
                 <a>
                     Generate a new sentence &nbsp;
                     <FontAwesomeIcon icon={faPlus} />
