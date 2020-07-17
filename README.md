@@ -1,13 +1,13 @@
-# standupSummary
+# Standup Summary
 
 ## General information
-`standupSummary` is a web app that takes in your stand-up notes on MLH Github and return a list of most frequently used words. This app can also generate a new sentence based on user's past comments using Markov chain rule.
+`Standup Summary` is a web app that takes in your stand-up notes on MLH Github, returns a list of most frequently used words, and generates a new sentence based on user's past comments using Markov chain rule.
 
-This project was submitted as part of the MLH Fellowship [Half-way Hackathon](https://mlh-fellowship.gitbook.io/fellow-handbook/events/halfway-hackathon), which encourages projects that improve the experience of current and future fellows. This `standupSummary` project aims to provide a tool for fellows to look back on their past work and have fun!
+This project was submitted as part of the MLH Fellowship [Half-way Hackathon](https://mlh-fellowship.gitbook.io/fellow-handbook/events/halfway-hackathon), which encourages projects that improve the experience of current and future fellows. This `Standup Summary` project aims to provide a tool for fellows to look back on their past work and have fun!
 
 ## Installation
 ### Dependencies
-The project uses React front-end and Flask back-end. To install the project, your machine must have `python` and `npm` installed.
+The project uses [React](https://reactjs.org/) front-end and [Flask](https://flask.palletsprojects.com/en/1.1.x/) back-end. To install the project, your machine must have `python` and `npm` installed.
 
 Now, to install the front-end, nagivate to `/client` folder and run `npm install`; and to install the back-end, navigate to `standupSummary/server/` and run `pip install -r requirements.txt`.
 
@@ -35,14 +35,16 @@ Once you have started **both** React and Flask servers, you can use your browser
 
 
 ## User guide
-Once you start the servers, you are greeted with the login screen:
-
-![](screenshots/welcome_screenshot.png)
-
-Once you have logged in, you can choose to see your most frequently used words by choosing the *right* pod (note that only members of a port can see comments of that port):
-
-![](screenshots/form_screenshot.png)
-
-If you are an MLH fellow and are in some valid pod, you are able to see the most frequent words that you used in your stand-up notes (excluding all English stop words). In addition, you can generate a new sentence based on your comments using the `Generate a new sentence` button.
+Once you start the servers, you are greeted with the login screen. After you have logged in, you can choose to see your most frequently used words by choosing the *right* pod (note that only members of a port can see comments of that port). Then, you are directed to the following screen with the most frequent words that you used in your stand-up notes (excluding all English stop words).
 
 ![](screenshots/summary_screen.png)
+
+In addition, you can generate a new sentence based on your comments using the `Generate a new sentence` button.
+
+## Development guide
+
+If you are interested in further developing the web app, you first should get [Github Personal Access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token).
+
+Here are some of the future directions for our web app:
+1. Integrate React server into Flask server
+2. Deploy the app so that fellows can start using it
