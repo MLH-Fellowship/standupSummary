@@ -22,22 +22,6 @@ const Dashboard = () => {
 
   if(num===0) num='';
 
-  // useEffect(() => {
-  //     fetch('/get_words').then(res => res.json())
-  //     .then(data => {
-  //       console.log(data);
-  //       if(data.words.error) {
-  //         setWordsData(data.words);
-  //       } else {
-  //         setWordsData(data.words.words);
-  //       }
-  //       setSentencesData(data.sentences);
-  //     })
-  //     .catch(error => {
-  //       console.log(error);
-  //     });
-  //   }, []);
-
   useEffect(() => {
     fetch('/get_words').then(res => res.json())
     .then(data => {
@@ -66,10 +50,10 @@ const Dashboard = () => {
       </nav>
       <section className="section">
         <div class = "level">
-          <Intro number={num} />
+          <Intro />
         </div>
         <div class="level align-top">
-          <List itemsList={wordsList} />
+          <List itemsList={wordsList} number={num} />
           <Sentences sentences={sentencesList} />
         </div>
       </section>

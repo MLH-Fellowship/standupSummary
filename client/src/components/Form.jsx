@@ -1,5 +1,5 @@
 // Libraries
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import '../App.css';
 import 'react-bulma-components/dist/react-bulma-components.min.css';
@@ -27,6 +27,21 @@ const Form = () => {
         numWordsReturned.push(i);
     }
 
+    useEffect(() => {
+        fetch('/get_summary').then(res => res.json())
+        .then(data => {
+          console.log(data);
+          if(data.num_words) setNumWords(data.num_words);
+          if(data.podname) setPodName(data.podname);
+          if(data.excluded_words && data.excluded_words !== "") {
+            setWordsList(data.excluded_words.split(' '));
+          }
+        })
+        .catch(error => {
+          console.log(error);
+        });
+      }, []);
+
     const removeWordFromList = (word) => {
         setWordsList(wordsList.filter(e => e !== word));
     };
@@ -46,10 +61,6 @@ const Form = () => {
         numWordsReturned.push(i);
     }
 
-    const numberWordsInSentenceOptions = numWordsReturned.map((option, i) => (
-        <option key={i} className="mx-6">{option}</option>
-    ));
-
     const podOptions = podNames.map((option, i) => (
         <option key={i} className="mx-6">{option}</option>
     ));
@@ -57,7 +68,7 @@ const Form = () => {
     const checkboxes = wordsList.map((word, i) => (
         <div class="notification level width-set-small">
             <span>{word} &nbsp;</span>
-            <FontAwesomeIcon icon={faTrashAlt} style={{cursor: 'pointer'}} onClick={() => {removeWordFromList(word)}} /> 
+            <FontAwesomeIcon className="deleteIcon hvr-grow" icon={faTrashAlt} onClick={() => {removeWordFromList(word)}} /> 
         </div>
     ));
 
@@ -119,10 +130,7 @@ const Form = () => {
                 </div>
             </div>
             <p class="control">
-            <button class="button is-primary" onClick={submit}>Submit</button>
-                {/* <a class="button is-primary" onClick={}>
-                    Submit
-                </a> */}
+                <button class="button is-primary" onClick={submit}>Submit</button>
             </p>
         </div>
     );
