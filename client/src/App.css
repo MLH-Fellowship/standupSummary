@@ -19,6 +19,10 @@ html {
   width: 20rem;
 }
 
+.deleteIcon {
+  cursor: pointer;
+}
+
 .loading {
   -webkit-animation: spinAround 700ms infinite linear;
   animation: spinAround 700ms infinite linear;
