@@ -12,7 +12,7 @@ The project uses [React](https://reactjs.org/) front-end and [Flask](https://fla
 Now, to install the front-end, nagivate to `/client` folder and run `npm install`; and to install the back-end, navigate to `standupSummary/server/` and run `pip install -r requirements.txt`.
 
 ### Database
-Once you have installed the dependencies for the project, let's create the sqlite3 database `login.db` locally on your machine. 
+Once you have installed all the dependencies, let's create the sqlite3 database `login.db` locally on your machine. 
 To start, navigate to the `/server` folder and run:
 
 ```
