@@ -3,7 +3,7 @@
 ## General information
 `Standup Summary` is a web app that takes in your stand-up notes on MLH Github, returns a list of most frequently used words, and generates a new sentence based on user's past comments using Markov chain rule.
 
-Inspired by the MLH Fellowship [Half-way Hackathon](https://mlh-fellowship.gitbook.io/fellow-handbook/events/halfway-hackathon) to improve the experiences of current and future fellows, this `Standup Summary` project aims to provide a tool for fellows to recap their summer work and generate resume-ready work descriptions!
+Inspired by the MLH Fellowship [Halfway Hackathon](https://mlh-fellowship.gitbook.io/fellow-handbook/events/halfway-hackathon) to improve the experiences of current and future fellows, this `Standup Summary` project aims to provide a tool for fellows to recap their summer work and generate resume-ready work descriptions!
 
 ## Installation
 ### Dependencies
@@ -37,7 +37,7 @@ Once you have started **both** React and Flask servers, you can use your browser
 ## User guide
 Once you start the servers, you are greeted with the login screen. After you have logged in, you can choose to see your most frequently used words by choosing the *right* pod (note that only members of a port can see comments of that port). Then, you are directed to the following screen with the most frequent words that you used in your stand-up notes (excluding all English stop words).
 
-![](screenshots/summary_screen.png)
+![](https://i.imgur.com/a8udbbz.gif)
 
 In addition, you can generate a new sentence based on your comments using the `Generate a new sentence` button. 
 
@@ -48,6 +48,6 @@ If you are interested in further developing the web app, you first should get [G
 For authentication access token, .... #TODO
 
 ### Future directions
-1. Integrate React server into Flask server
+1. Serve the static React files with Flask to make deployment easier
 2. Deploy the app to a live website
 3. Improve the sentence generator to make it resume-ready
