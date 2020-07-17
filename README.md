@@ -3,7 +3,7 @@
 ## General information
 `Standup Summary` is a web app that takes in your stand-up notes on MLH Github, returns a list of most frequently used words, and generates a new sentence based on user's past comments using Markov chain rule.
 
-This project was submitted as part of the MLH Fellowship [Half-way Hackathon](https://mlh-fellowship.gitbook.io/fellow-handbook/events/halfway-hackathon), which encourages projects that improve the experience of current and future fellows. This `Standup Summary` project aims to provide a tool for fellows to look back on their past work and have fun!
+Inspired by the MLH Fellowship [Half-way Hackathon](https://mlh-fellowship.gitbook.io/fellow-handbook/events/halfway-hackathon) to improve the experiences of current and future fellows, this `Standup Summary` project aims to provide a tool for fellows to recap their summer work and generate resume-ready work descriptions!
 
 ## Installation
 ### Dependencies
@@ -39,12 +39,15 @@ Once you start the servers, you are greeted with the login screen. After you hav
 
 ![](screenshots/summary_screen.png)
 
-In addition, you can generate a new sentence based on your comments using the `Generate a new sentence` button.
+In addition, you can generate a new sentence based on your comments using the `Generate a new sentence` button. Note that for now, 
 
 ## Development guide
+### Access token
+If you are interested in further developing the web app, you first should get [Github Personal Access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token). 
 
-If you are interested in further developing the web app, you first should get [Github Personal Access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token).
+For authentication access token, .... #TODO
 
-Here are some of the future directions for our web app:
+### Future directions
 1. Integrate React server into Flask server
-2. Deploy the app so that fellows can start using it
+2. Deploy the app to a live website
+3. Improve the sentence generator to make it resume-ready
