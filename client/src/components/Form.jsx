@@ -31,9 +31,9 @@ const Form = () => {
         fetch('/get_summary').then(res => res.json())
         .then(data => {
           console.log(data);
-          setNumWords(data.num_words);
-          setPodName(data.podname);
-          if(data.excluded_words !== "") {
+          if(data.num_words) setNumWords(data.num_words);
+          if(data.podname) setPodName(data.podname);
+          if(data.excluded_words && data.excluded_words !== "") {
             setWordsList(data.excluded_words.split(' '));
           }
         })
@@ -130,10 +130,7 @@ const Form = () => {
                 </div>
             </div>
             <p class="control">
-            <button class="button is-primary" onClick={submit}>Submit</button>
-                {/* <a class="button is-primary" onClick={}>
-                    Submit
-                </a> */}
+                <button class="button is-primary" onClick={submit}>Submit</button>
             </p>
         </div>
     );

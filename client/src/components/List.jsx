@@ -8,7 +8,7 @@ import '../App.css';
 import 'react-bulma-components/dist/react-bulma-components.min.css';
 
 
-const List = ({ itemsList }) => {
+const List = ({ itemsList, number }) => {
     let items;
 
     if(itemsList.error) {
@@ -37,6 +37,7 @@ const List = ({ itemsList }) => {
 
     return (
         <div>
+            <h4 className="subtitle is-4">Here are your {number} most used words during standups.</h4>
           <CSSTransitionGroup
             transitionName="example"
             transitionAppear={true}
