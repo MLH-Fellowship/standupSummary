@@ -39,7 +39,7 @@ Once you start the servers, you are greeted with the login screen. After you hav
 
 ![](screenshots/summary_screen.png)
 
-In addition, you can generate a new sentence based on your comments using the `Generate a new sentence` button. Note that for now, 
+In addition, you can generate a new sentence based on your comments using the `Generate a new sentence` button. 
 
 ## Development guide
 ### Access token
