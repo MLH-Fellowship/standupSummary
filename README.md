@@ -11,8 +11,28 @@ The project uses [React](https://reactjs.org/) front-end and [Flask](https://fla
 
 Now, to install the front-end, nagivate to `/client` folder and run `npm install`; and to install the back-end, navigate to `standupSummary/server/` and run `pip install -r requirements.txt`.
 
+### Database
+Once you have installed the dependencies for the project, let's create the sqlite3 database `login.db` locally on your machine. 
+To start, navigate to the `/server` folder and run:
+
+```
+sqlite3 login.db
+.tables
+.exit
+```
+
+Once `login.db` is created, let's start a python interactive session to create the db tables in `login.db`. 
+To start a python interactive session run:
+
+```
+python
+from app import db
+db.create_all()
+quit()
+```
+
 ### Server
-Once you have installed all the dependencies, let's fire up our servers. To start the React server, run:
+Once you have installed all the dependencies and created `login.db`, let's fire up our servers. To start the React server, run:
 ```
 cd client/
 npm start
