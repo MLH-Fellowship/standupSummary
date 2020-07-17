@@ -8,3 +8,4 @@ server/login.db
 .env
 nameOfEnvironment/
 standupSummary/server/__pycache__
+standupSummary/server/.env
