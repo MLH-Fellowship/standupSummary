@@ -3,7 +3,7 @@ env/
 .serverless/
 .DS_Store
 __pycache__
-server/login.db
+standupSummary/server/login.db
 .vscode/
 .env
 nameOfEnvironment/
